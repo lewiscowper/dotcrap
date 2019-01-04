@@ -1,0 +1,189 @@
+# Dotcrap - A mass of dotfiles crapped out by applications automatically.
+#
+# Resources:
+# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+# https://plus.google.com/+RobPikeTheHuman/posts/R58WgWwN9jp
+#
+# If you source this file then lots of them should be moved out of your home
+# directory
+
+# A single base directory relative to which user-specific data files should be
+# written.
+export XDG_DATA_HOME="$HOME"/.local/share
+# A single base directory relative to which user-specific configuration files
+# should be written
+export XDG_CONFIG_HOME="$HOME"/.config
+# A single base directory relative to which user-specific non-essential
+# (cached) data should be written
+export XDG_CACHE_HOME="$HOME"/.local/cache
+# A single base directory relative to which user-specific runtime files and
+# other file objects should be placed
+export XDG_RUNTIME_DIR="$HOME"/.local/tmp
+
+# Handy function to determine if a command is installed
+_has() {
+  command -v $1>/dev/null 2>&1
+}
+
+if _has bash; then
+  export BASH_COMPLETION_USER_FILE="$XDG_CONFIG_HOME"/bash-completion/bash_completion
+fi
+
+if _has tput; then
+	# Set terminfo location + directories
+	export TERMINFO="$XDG_DATA_HOME"/terminfo
+	export TERMINFO_DIRS="$XDG_DATA_HOME"/terminfo:/usr/share/terminfo
+fi
+
+if _has node; then
+	# NODE_REPL_HISTORY sets the location of the node repl history
+	export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node/node_history
+
+	# Move .babel.json (Babel's cache file, elsewhere)
+  # Adding this here as you may be running babel via a script or npx etc, so
+  # the command wouldn't register as being installed directly. But what you
+  # definitely need is node
+	export BABEL_CACHE_PATH="$XDG_CACHE_HOME"/babel/babel.json
+fi
+
+if _has npm; then
+	# Move npm config file.
+	export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
+
+	# Move node-gyp devdir out of .node-gyp
+	export npm_config_devdir="$XDG_CACHE_HOME"/gyp
+
+	# Move npm cache
+	export npm_config_cache="$XDG_CACHE_HOME"/npm
+
+	# Move globally installed packages
+	export npm_config_prefix="$XDG_DATA_HOME"/npm
+
+	# Move tmp directory, will be cleaned on success, but left
+	# here for forensic purposes on failure
+	export npm_config_tmp="$XDG_RUNTIME_DIR"/npm
+
+	# Set init-module just in case we want to use it later
+	export npm_config_init_module="$XDG_CONFIG_HOME"/npm/config/npm-init.js
+fi
+
+if _has less; then
+	# Move .lesshst (Less's history file)
+	export LESSHISTFILE="$XDG_RUNTIME_DIR"/less/history
+fi
+
+if _has wget; then
+	# Move wget stuff out of the home directory
+	export WGETRC="$XDG_CONFIG_HOME"/wget/wgetrc
+fi
+
+
+if _has tmux; then
+	# Move tmux's tmp directory
+	export TMUX_TMPDIR="$XDG_RUNTIME_DIR"/tmux
+
+  # This launches tmux with the following options:
+  #
+  # -f => sets a config file
+  alias tmux='tmux -f $XDG_CONFIG_HOME/tmux/conf'
+fi
+
+if _has weechat; then
+	# Move weechat config from .weechat
+	export WEECHAT_HOME="$XDG_CONFIG_HOME"/weechat
+fi
+
+if _has docker; then
+	# Move docker's config from .docker/
+	export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+fi
+
+if _has kubectl; then
+	# Move k8s config out of .kube/
+	export KUBECONFIG="$XDG_CONFIG_HOME"/kube/config
+
+  # Launch kubectl with the cache directory set to a proper cache dir
+  alias kubectl='kubectl --cache-dir $XDG_CACHE_HOME/kube/http'
+fi
+
+if _has helm; then
+	# Helm variable for location of config
+	export HELM_HOME="$XDG_CONFIG_HOME"/helm/helm
+fi
+
+if _has atom; then
+	# Move atoms junk out of ~/.atom
+	export ATOM_HOME="$XDG_DATA_HOME"/atom
+fi
+
+if _has gpg; then
+	# Move gpg config files out of ~/.gnupg
+	export GNUPGHOME="$XDG_CONFIG_HOME"/gnupg
+fi
+
+if _has rustup; then
+	# Move rustup config from ~/.rustup
+	export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+fi
+
+if _has cargo; then
+	# Move cargo data out of .cargo
+	export CARGO_HOME="$XDG_DATA_HOME"/cargo
+fi
+
+if _has aws; then
+	# Move aws-cli config out of ~/.aws
+	export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config
+
+	# Move aws-cli credentials out of ~/.aws
+	export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME"/aws/credentials
+fi
+
+if _has emacs; then
+	# Move spacemacs config files out of ~/.spacemacs or ~/.spacemacs.d/
+	export SPACEMACSDIR="$XDG_CONFIG_HOME"/spacemacs
+fi
+
+if _has bundle; then
+	# Move bundle config out of ~/.bundle
+	export BUNDLE_USER_CONFIG="$XDG_CONFIG_HOME"/bundle
+	export BUNDLE_USER_CACHE="$XDG_CACHE_HOME"/bundle
+	export BUNDLE_USER_PLUGIN="$XDG_DATA_HOME"/bundle
+fi
+
+if _has gem; then
+	# Move ruby config out of ~/.gem
+	export GEM_HOME="$XDG_DATA_HOME"/gem
+	export GEM_SPEC_CACHE="$XDG_CACHE_HOME"/gem
+fi
+
+if _has ansible; then
+	# Move ansible config out of ~/.ansible
+	export ANSIBLE_CONFIG="$XDG_CONFIG_HOME"/ansible
+fi
+
+if _has travis; then
+	# Move travis config out of ~/.travis
+	export TRAVIS_CONFIG_PATH="$XDG_CONFIG_HOME"/travis
+fi
+
+if _has git; then
+	# Set git template directory
+	export GIT_TEMPLATE_DIR="$XDG_CONFIG_HOME"/git/template
+fi
+
+# This check seems shaky, but I don't know enough about android dev to disprove it
+if _has adb; then
+	# Move android config out of ~/.android
+	export ANDROID_SDK_HOME="$XDG_CONFIG_HOME"/android
+fi
+
+if _has code; then
+  # Launch code with XDG directories specified for data and extensions
+  alias code='code --user-data-dir $XDG_CONFIG_HOME/vscode --extensions-dir $XDG_RUNTIME_DIR/vscode/extensions'
+fi
+
+if _has svn; then
+  # Sets an alias that moves the config directory out of ~/.subversion
+  alias svn='svn --config-dir $XDG_CONFIG_HOME/subversion'
+fi
